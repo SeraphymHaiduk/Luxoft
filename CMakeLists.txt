@@ -19,33 +19,33 @@ set(PROJECT_SOURCES
         qml.qrc
 )
 
-#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-#	qt_add_executable(Task1
-#		MANUAL_FINALIZATION
-#		${PROJECT_SOURCES}
-#		)
-## Define target properties for Android with Qt 6 as:
-##    set_property(TARGET Task1 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-##                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-## For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-#else()
-#	if(ANDROID)
-#		add_library(Task1 SHARED
-#			${PROJECT_SOURCES}
-#			)
-## Define properties for Android with Qt 5 after find_package() calls as:
-##    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    else()
-#		add_executable(Task1
-#			${PROJECT_SOURCES}
-#		)
-#    endif()
-#endif()
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+	qt_add_executable(Task1
+		MANUAL_FINALIZATION
+		${PROJECT_SOURCES}
+		)
+# Define target properties for Android with Qt 6 as:
+#    set_property(TARGET Task1 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+else()
+	if(ANDROID)
+		add_library(Task1 SHARED
+			${PROJECT_SOURCES}
+			)
+# Define properties for Android with Qt 5 after find_package() calls as:
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else()
+		add_executable(Task1
+			${PROJECT_SOURCES}
+		)
+    endif()
+endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${CMAKE_SOURCE_DIR}/build)
-#target_compile_definitions(Task1
-#  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
+target_compile_definitions(Task1
+  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(Task1
   PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick
   modelPlugin
