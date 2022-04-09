@@ -1,4 +1,4 @@
-function moveTile(model,index,size){
+    function moveTile(model,index,size){
         var j = index % size
         var i = Math.trunc(index/size)
         if(i>0){
@@ -37,7 +37,7 @@ function moveTile(model,index,size){
         }
         var n = 0
         for(var i = 0; i < size*size-1; i++){
-            if(model.get(i).value !== size*size && model.get(i+1).value){
+            if(model.get(i).value !== size*size && model.get(i+1).value!==size*size){
                 for(var j = i+1; j < size*size; j++){
                     if(model.get(i).value>model.get(j).value){
                         n += 1
@@ -51,9 +51,9 @@ function moveTile(model,index,size){
     function shuffle(model,size){
         for(var i = 0; i < size*size;i++){
             var tmp = model.get(i).value
-            var randI = Math.floor(Math.random()*(size*size-1))
-            model.get(i).value = model.get(randI).value
-            model.get(randI).value = tmp
+            var randI = Math.round(Math.random()*(size*size-1))
+                model.get(i).value = model.get(randI).value
+                model.get(randI).value = tmp
         }
     }
 

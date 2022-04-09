@@ -48,9 +48,7 @@ target_compile_definitions(Task1
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(Task1
   PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick
-  modelPlugin
   )
-
 #set_target_properties(Task1 PROPERTIES
 #    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
 #    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

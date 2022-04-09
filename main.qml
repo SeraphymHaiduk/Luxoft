@@ -1,7 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import "GameLogic.js" as Logic
+//import "GameLogic.js" as Logic
+import Plugins.ModelPlugin 1.0
 Window{
     id: root
     width: 400
@@ -53,5 +54,6 @@ Window{
             }
         }
     }
+
 }
 

@@ -3,7 +3,6 @@
         <file>main.qml</file>
         <file>Tile.qml</file>
         <file>GameBoard.qml</file>
-        <file>GameLogic.js</file>
         <file>WinMessage.qml</file>
         <file>GridModel.qml</file>
     </qresource>

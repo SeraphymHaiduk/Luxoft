@@ -1,2 +1,2 @@
-module plugins.ModelPlugin
-plugin modelPlugin
+module Plugins.ModelPlugin
+plugin ModelPlugin
