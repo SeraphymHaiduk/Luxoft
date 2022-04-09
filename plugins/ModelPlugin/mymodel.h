@@ -23,7 +23,7 @@ public:
     Q_INVOKABLE void appendValue(int value);
     Q_INVOKABLE int size() const;
     Q_INVOKABLE void setSize(int size);
-    Q_INVOKABLE void swap(uint32_t first,uint32_t second);
+    Q_INVOKABLE void move(int first,int second);
 private:
     QList<int> m_data;
 };

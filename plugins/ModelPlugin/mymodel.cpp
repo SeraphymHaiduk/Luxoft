@@ -1,5 +1,6 @@
 #include "mymodel.h"
 #include <QDebug>
+#include <functional>
 MyModel::MyModel(QObject *parent): QAbstractListModel(parent){
     setSize(16);
 }
@@ -83,14 +84,50 @@ void MyModel::setSize(int size){
     }
 }
 
-void MyModel::swap(uint32_t first, uint32_t second){
-    if(first >= m_data.size() || second >= m_data.size())
+void MyModel::move(int index, int gridSize){
+    if(index >= m_data.size() || gridSize*gridSize != m_data.size())
         return;
-    QModelIndex indexFirst = this->index(first);
-    QModelIndex indexSecond = this->index(second);
-    beginMoveRows(indexFirst, second,second,indexSecond,first);
+    std::function<void(int,int)> beginMove = [&](int first, int second){
+        beginMoveRows(QModelIndex(), first,first,QModelIndex(),second);
+        endMoveRows();
+    };
+    std::function<void(int,int)> swap = [&](int first, int second){
         int tmp = getValue(first);
-        setValue(first,getValue(second));
-        setValue(second,tmp);
-    endMoveRows();
+        setValue(first, getValue(second));
+        setValue(second, tmp);
+    };
+    if(gridSize*gridSize != size())
+        return;
+    int j = index % gridSize;
+    int i = index/gridSize;
+    if(i>0){
+        if(getValue(j+(i-1)*gridSize) == gridSize*gridSize){    //up+
+            beginMove(j+i*gridSize,j+((i-1)*gridSize));
+            beginMove((j+1)+(i-1)*gridSize,j+((i)*gridSize)+1);
+            swap(j+i*gridSize,j+((i-1)*gridSize));
+            return;
+        }
+    }
+    if(j>0){
+        if(getValue(j-1+i*gridSize) == gridSize*gridSize){       //left+
+            beginMove(j+(i*gridSize),(j-1)+i*gridSize);
+            swap(j+(i*gridSize),(j-1)+i*gridSize);
+            return;
+        }
+    }
+    if(j<gridSize-1){
+        if(getValue(j+1+i*gridSize) == gridSize*gridSize){      //right+
+            beginMove(j+i*gridSize,j+1+i*gridSize+1);
+            swap(j+i*gridSize,j+1+i*gridSize);
+            return;
+        }
+    }
+    if(i<gridSize-1){
+        if(getValue(j+(i+1)*gridSize) == gridSize*gridSize){ //down+
+            beginMove(j+i*gridSize,j+((i+1)*gridSize));
+            beginMove((j)+(i+1)*gridSize,j+(i*gridSize));
+            swap(j+i*gridSize,j+((i+1)*gridSize));
+            return;
+        }
+    }
 }

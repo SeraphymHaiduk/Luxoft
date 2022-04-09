@@ -11,15 +11,9 @@ GridView{
     cellWidth: width/size
     cellHeight: height/size
     interactive: false
-//    Transition {
-//        id: transition
-//        NumberAnimation { properties: "scale"; from: 0; to: 1; duration: 2000; easing.type: Easing.OutBounce }
-//    }
-//    add: transition
-//    move:  transition
-//    displaced: transition
-
-
+    move: Transition {
+        NumberAnimation { properties: "x,y"; duration: 1000 ; easing.type: Easing.OutBounce }
+    }
     delegate: Tile{
         id:tileDelegate
         isEmpty: value === 16
@@ -27,7 +21,7 @@ GridView{
         height: GridView.view.cellHeight
         text: value
         onClicked:{
-            Logic.moveTile(root.model,index,root.size)
+            root.model.move(index,size)
             if(Logic.isSolved(root.model,root.size)){
                 root.solved()
             }

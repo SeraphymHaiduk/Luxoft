@@ -3,42 +3,6 @@
 #include <QDebug>
 Logic::Logic(QObject* parent): QObject(parent){}
 
-bool Logic::moveTile(MyModel* model, int index, int gridSize){
-    if(gridSize*gridSize != model->size()){
-        gridSizeError(gridSize);
-        return false;
-    }
-
-    if(gridSize*gridSize != model->size())
-        return false;
-    int j = index % gridSize;
-    int i = index/gridSize;
-    if(i>0){
-        if(model->getValue(j+(i-1)*gridSize) == gridSize*gridSize){
-            model->swap(j+i*gridSize,j+((i-1)*gridSize));
-            return true;
-        }
-    }
-    if(j>0){
-        if(model->getValue(j-1+i*gridSize) == gridSize*gridSize){
-            model->swap(j+(i*gridSize),(j-1)+i*gridSize);
-            return true;
-        }
-    }
-    if(j<gridSize-1){
-        if(model->getValue(j+1+i*gridSize) == gridSize*gridSize){
-            model->swap(j+i*gridSize,j+1+i*gridSize);
-            return true;
-        }
-    }
-    if(i<gridSize-1){
-        if(model->getValue(j+(i+1)*gridSize) == gridSize*gridSize){
-            model->swap(j+i*gridSize,j+((i+1)*gridSize));
-            return true;
-        }
-    }
-    return false;
-}
 bool Logic::isSolvable(MyModel* model, int gridSize){
     if(gridSize*gridSize != model->size()){
         gridSizeError(gridSize);
