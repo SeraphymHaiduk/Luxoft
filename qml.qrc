@@ -4,6 +4,5 @@
         <file>Tile.qml</file>
         <file>GameBoard.qml</file>
         <file>WinMessage.qml</file>
-        <file>GridModel.qml</file>
     </qresource>
 </RCC>

@@ -14,11 +14,9 @@ add_library(ModelPlugin
 
 	plugin.h
 	mymodel.h
-	logic.h
 
 	plugin.cpp
 	mymodel.cpp
-	logic.cpp
 	)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Quick Qml)

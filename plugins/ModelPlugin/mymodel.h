@@ -12,20 +12,21 @@ public:
        ValueRole = Qt::UserRole + 1,
     };
     MyModel(QObject* parent = 0);
-    virtual int rowCount(const QModelIndex &parent) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual QHash<int,QByteArray> roleNames() const;
-    virtual bool setData(const QModelIndex &index,const QVariant value, int role);
-    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QHash<int,QByteArray> roleNames() const override;
 
-    Q_INVOKABLE int getValue(int ind) const;
-    Q_INVOKABLE bool setValue(int ind,int value);
-    Q_INVOKABLE void appendValue(int value);
-    Q_INVOKABLE int size() const;
-    Q_INVOKABLE void setSize(int size);
-    Q_INVOKABLE void move(int first,int second);
+    Q_INVOKABLE void populate(int gridSize);
+    Q_INVOKABLE void move(int index);
+
+    bool isSolvable();
+    void shuffle();
+    Q_INVOKABLE bool isSolved();
+    Q_INVOKABLE void mix();
+
 private:
     QList<int> m_data;
+    int m_gridSize;
 };
 
 #endif // MYMODEL_H

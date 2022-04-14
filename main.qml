@@ -1,12 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-//import "GameLogic.js" as Logic
 import Plugins.ModelPlugin 1.0
 Window{
     id: root
     width: 400
     height: 680
+    minimumWidth: 200
+    minimumHeight: minimumWidth*1.2
     visible:true
     Item{
         id:frame
@@ -34,7 +35,7 @@ Window{
             anchors.horizontalCenter: parent.horizontalCenter
             width: gameBoard.width*0.3
             text: "mix"
-            onClicked: Logic.mix(gameBoard.model,gameBoard.size)
+            onClicked: gameBoard.model.mix()
         }
     }
 
@@ -43,13 +44,14 @@ Window{
         anchors.fill: parent
         sourceComponent: undefined
     }
+
     Component{
         id: winMsgComponent
         WinMessage{
             Component.onCompleted: {
                 newGameButton.clicked.connect(()=>{
                 menuLoader.sourceComponent = undefined
-                Logic.mix(gameBoard.model,gameBoard.size)
+                gameBoard.model.mix()
               })
             }
         }

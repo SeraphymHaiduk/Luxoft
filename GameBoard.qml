@@ -1,5 +1,4 @@
 import QtQuick 2.15
-//import "GameLogic.js" as Logic
 import Plugins.ModelPlugin 1.0
 GridView{
     id: root
@@ -21,11 +20,12 @@ GridView{
         height: GridView.view.cellHeight
         text: value
         onClicked:{
-            root.model.move(index,size)
-            if(Logic.isSolved(root.model,root.size)){
+            root.model.move(index)
+            if(root.model.isSolved()){
                 root.solved()
             }
         }
     }
+    Component.onCompleted: model.populate(size)
 }
 

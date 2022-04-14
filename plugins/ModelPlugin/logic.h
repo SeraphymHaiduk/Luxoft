@@ -9,11 +9,6 @@ class Logic: public QObject
     Q_OBJECT
 public:
     Logic(QObject *parent = 0);
-    Q_INVOKABLE bool isSolvable(MyModel* model, int gridSize);
-    Q_INVOKABLE void shuffle(MyModel* model, int gridSize);
-    Q_INVOKABLE bool isSolved(MyModel* model, int gridSize);
-    Q_INVOKABLE void mix(MyModel* model, int gridSize);
-
     void gridSizeError(int gridSize);
 };
 

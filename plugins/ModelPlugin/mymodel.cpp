@@ -1,11 +1,11 @@
 #include "mymodel.h"
 #include <QDebug>
-#include <functional>
+#include <algorithm>
+#include <time.h>
 MyModel::MyModel(QObject *parent): QAbstractListModel(parent){
-    setSize(16);
 }
 
-int MyModel::rowCount(const QModelIndex &parent) const{
+int MyModel::rowCount(const QModelIndex &parent = QModelIndex()) const{
     if(parent.isValid()){
         return 0;
     }
@@ -18,7 +18,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const{
     }
     switch (role) {
     case ValueRole:
-        return QVariant(m_data.at(index.row()));
+        return m_data.at(index.row());
     default:
         return QVariant();
     }
@@ -30,104 +30,125 @@ QHash<int,QByteArray> MyModel::roleNames() const{
     return roles;
 }
 
-bool MyModel::setData(const QModelIndex &index, const QVariant value, int role){
-    if(!index.isValid()){
-        return false;
+void MyModel::populate(int gridSize){
+    if(gridSize <= 0){
+        return;
     }
-    switch (role) {
-    case ValueRole: m_data[index.row()] = value.toInt();
-        break;
-    default: return false;
-    }
-    emit dataChanged(index,index,QVector<int>() << role);
-    return true;
-}
-
-Qt::ItemFlags MyModel::flags(const QModelIndex &index) const{
-    if(!index.isValid()){
-        return Qt::ItemIsEnabled;
-    }
-    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
-}
-
-int MyModel::getValue(int ind) const{
-    return m_data[ind];
-}
-
-bool MyModel::setValue(int ind, int value){
-    if(ind < 0 || ind >= m_data.size()){
-        return false;
-    }
-    m_data[ind] = value;
-    QModelIndex mIndex = this->index(ind);
-    dataChanged(mIndex,mIndex,QVector<int>() << ValueRole);
-    return true;
-}
-
-void MyModel::appendValue(int value){
-    m_data.append(value);
-    QModelIndex mIndex = this->index(m_data.size()-1);
-    dataChanged(mIndex,mIndex,QVector<int>() << ValueRole);
-}
-
-int MyModel::size() const{
-    return m_data.size();
-}
-
-void MyModel::setSize(int size){
     if(m_data.size()!=0)
         m_data.clear();
-    for(int i = 1; i <=size; i++){
-        beginInsertRows(QModelIndex(),m_data.size(),m_data.size());
+    m_gridSize = gridSize;
+    beginInsertRows(QModelIndex(),m_data.size(),m_gridSize*m_gridSize-1);
+    for(int i = 1; i <= gridSize*gridSize; i++){
         m_data.append(i);
-        endInsertRows();
     }
+    endInsertRows();
 }
 
-void MyModel::move(int index, int gridSize){
-    if(index >= m_data.size() || gridSize*gridSize != m_data.size())
+void MyModel::move(int index){
+    if(index >= m_data.size())
         return;
-    std::function<void(int,int)> beginMove = [&](int first, int second){
-        beginMoveRows(QModelIndex(), first,first,QModelIndex(),second);
-        endMoveRows();
+    auto swap = [this](int first, int second){
+        int tmp = m_data[first];
+        m_data[first] = m_data[second];
+        m_data[second] =  tmp;
     };
-    std::function<void(int,int)> swap = [&](int first, int second){
-        int tmp = getValue(first);
-        setValue(first, getValue(second));
-        setValue(second, tmp);
-    };
-    if(gridSize*gridSize != size())
-        return;
-    int j = index % gridSize;
-    int i = index/gridSize;
+    int j = index % m_gridSize;
+    int i = index/m_gridSize;
+    int first, second;
     if(i>0){
-        if(getValue(j+(i-1)*gridSize) == gridSize*gridSize){    //up+
-            beginMove(j+i*gridSize,j+((i-1)*gridSize));
-            beginMove((j+1)+(i-1)*gridSize,j+((i)*gridSize)+1);
-            swap(j+i*gridSize,j+((i-1)*gridSize));
+        if(m_data[j+(i-1)*m_gridSize] == m_data.size()){    //up+
+            first = j+i*m_gridSize;
+            second = j+((i-1)*m_gridSize);
+            beginMoveRows(QModelIndex(), first,first,QModelIndex(),second);
+            swap(first, second);
+            endMoveRows();
+            first = (j+1)+(i-1)*m_gridSize;
+            second = j+((i)*m_gridSize)+1;
+            beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
+            endMoveRows();
             return;
         }
     }
     if(j>0){
-        if(getValue(j-1+i*gridSize) == gridSize*gridSize){       //left+
-            beginMove(j+(i*gridSize),(j-1)+i*gridSize);
-            swap(j+(i*gridSize),(j-1)+i*gridSize);
+        if(m_data[j-1+i*m_gridSize] == m_data.size()){       //left+
+            first = j+(i*m_gridSize);
+            second = (j-1)+i*m_gridSize;
+            beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
+            swap(first, second);
+            endMoveRows();
             return;
         }
     }
-    if(j<gridSize-1){
-        if(getValue(j+1+i*gridSize) == gridSize*gridSize){      //right+
-            beginMove(j+i*gridSize,j+1+i*gridSize+1);
-            swap(j+i*gridSize,j+1+i*gridSize);
+    if(j<m_gridSize-1){
+        if(m_data[j+1+i*m_gridSize] == m_data.size()){      //right+
+            first = j+i*m_gridSize;
+            second = j+1+i*m_gridSize+1;
+            beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
+            swap(j+i*m_gridSize,j+1+i*m_gridSize);
+            endMoveRows();
             return;
         }
     }
-    if(i<gridSize-1){
-        if(getValue(j+(i+1)*gridSize) == gridSize*gridSize){ //down+
-            beginMove(j+i*gridSize,j+((i+1)*gridSize));
-            beginMove((j)+(i+1)*gridSize,j+(i*gridSize));
-            swap(j+i*gridSize,j+((i+1)*gridSize));
+    if(i<m_gridSize-1){
+        if(m_data[j+(i+1)*m_gridSize] == m_data.size()){ //down+
+            first = j+i*m_gridSize;
+            second = j+((i+1)*m_gridSize);
+            beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
+            swap(first,second);
+            endMoveRows();
+            first = (j)+(i+1)*m_gridSize;
+            second = j+(i*m_gridSize);
+            beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
+            endMoveRows();
             return;
         }
     }
 }
+
+
+bool MyModel::isSolvable(){
+    qDebug() << "is solvable?";
+    qDebug() << m_gridSize;
+    int e = 0;
+    for(int i = 0; i < m_data.size(); i++){
+        if(m_data[i] == m_data.size())
+            e = i/m_gridSize+1;
+    }
+    int n = 0;
+    for(int i = 0; i < m_data.size()-1; i++){
+        if(m_data[i] != m_data.size() && m_data[i+1] != m_data.size()){
+            for(int j = i+1; j < m_data.size(); j++){
+                if(m_data[i] > m_data[j]){
+                    n += 1;
+                }
+            }
+        }
+    }
+    return !((n+e)%2);
+}
+void MyModel::shuffle(){
+    srand(time(NULL));
+    for(int i = 0; i < m_data.size();i++){
+        int tmp = m_data[i];
+        int randI = rand()%m_data.size();
+        m_data[i] = m_data[randI];
+        m_data[randI] = tmp;
+    }
+    QModelIndex topLeft = this->index(0);
+    QModelIndex bottomRight = this->index(m_data.size()-1);
+    emit dataChanged(topLeft,bottomRight);
+}
+bool MyModel::isSolved(){
+    if(m_data[m_data.size()-1] != m_data.size()){
+        return false;
+    }
+    return std::is_sorted(m_data.begin(),m_data.end());
+}
+void MyModel::mix(){
+    do{
+        shuffle();
+        qDebug() << ("new model values");
+    } while(!isSolvable());
+    qDebug() << ("new combination successfully found");
+}
+
