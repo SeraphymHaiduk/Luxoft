@@ -7,7 +7,7 @@
 class MyModel: public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(int gridSize READ getGridSize)
+    Q_PROPERTY(int gridSize READ getGridSize NOTIFY gridSizeChanged)
 public:
     enum Roles{
        ValueRole = Qt::UserRole + 1,
@@ -22,6 +22,8 @@ public:
     Q_INVOKABLE bool isSolved();
     Q_INVOKABLE void mix();
     int getGridSize() const;
+signals:
+    void gridSizeChanged();
 private:
     QList<int> m_data;
     int m_gridSize;

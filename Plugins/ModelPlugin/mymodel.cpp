@@ -45,11 +45,6 @@ void MyModel::populate(int gridSize){
 void MyModel::move(int index){
     if(index >= m_data.size())
         return;
-    auto swap = [this](int first, int second){
-        int tmp = m_data[first];
-        m_data[first] = m_data[second];
-        m_data[second] =  tmp;
-    };
     int j = index % m_gridSize;
     int i = index/m_gridSize;
     int first, second;
@@ -58,7 +53,6 @@ void MyModel::move(int index){
             first = j+i*m_gridSize;
             second = j+((i-1)*m_gridSize);
             beginMoveRows(QModelIndex(), first,first,QModelIndex(),second);
-//            swap(first, second);
                 m_data.move(first,second);
             endMoveRows();
             first = (j+1)+(i-1)*m_gridSize;
@@ -74,7 +68,6 @@ void MyModel::move(int index){
             first = j+(i*m_gridSize);
             second = (j-1)+i*m_gridSize;
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
-//            swap(first, second);
                 m_data.move(first,second);
             endMoveRows();
             return;
@@ -85,7 +78,6 @@ void MyModel::move(int index){
             first = j+i*m_gridSize;
             second = j+1+i*m_gridSize+1;
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
-//            swap(j+i*m_gridSize,j+1+i*m_gridSize);
                 m_data.move(first,second);
             endMoveRows();
             return;
@@ -96,7 +88,6 @@ void MyModel::move(int index){
             first = j+i*m_gridSize;
             second = j+((i+1)*m_gridSize);
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
-//            swap(first,second);
                 m_data.move(first,second-1);
             endMoveRows();
             first = (j)+(i+1)*m_gridSize;
