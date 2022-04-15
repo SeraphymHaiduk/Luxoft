@@ -7,6 +7,7 @@
 class MyModel: public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int gridSize READ getGridSize)
 public:
     enum Roles{
        ValueRole = Qt::UserRole + 1,
@@ -16,17 +17,18 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int,QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void populate(int gridSize);
     Q_INVOKABLE void move(int index);
 
-    bool isSolvable();
-    void shuffle();
     Q_INVOKABLE bool isSolved();
     Q_INVOKABLE void mix();
-
+    int getGridSize() const;
 private:
     QList<int> m_data;
     int m_gridSize;
+
+    void populate(int gridSize);
+    bool isSolvable();
+    void shuffle();
 };
 
 #endif // MYMODEL_H

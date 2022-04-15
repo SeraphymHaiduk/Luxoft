@@ -3,12 +3,10 @@
 #include <algorithm>
 #include <time.h>
 MyModel::MyModel(QObject *parent): QAbstractListModel(parent){
+    populate(4);
 }
 
 int MyModel::rowCount(const QModelIndex &parent = QModelIndex()) const{
-    if(parent.isValid()){
-        return 0;
-    }
     return m_data.size();
 }
 
@@ -60,11 +58,13 @@ void MyModel::move(int index){
             first = j+i*m_gridSize;
             second = j+((i-1)*m_gridSize);
             beginMoveRows(QModelIndex(), first,first,QModelIndex(),second);
-            swap(first, second);
+//            swap(first, second);
+                m_data.move(first,second);
             endMoveRows();
             first = (j+1)+(i-1)*m_gridSize;
             second = j+((i)*m_gridSize)+1;
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
+                m_data.move(first,second-1);
             endMoveRows();
             return;
         }
@@ -74,7 +74,8 @@ void MyModel::move(int index){
             first = j+(i*m_gridSize);
             second = (j-1)+i*m_gridSize;
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
-            swap(first, second);
+//            swap(first, second);
+                m_data.move(first,second);
             endMoveRows();
             return;
         }
@@ -84,7 +85,8 @@ void MyModel::move(int index){
             first = j+i*m_gridSize;
             second = j+1+i*m_gridSize+1;
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
-            swap(j+i*m_gridSize,j+1+i*m_gridSize);
+//            swap(j+i*m_gridSize,j+1+i*m_gridSize);
+                m_data.move(first,second);
             endMoveRows();
             return;
         }
@@ -94,11 +96,13 @@ void MyModel::move(int index){
             first = j+i*m_gridSize;
             second = j+((i+1)*m_gridSize);
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
-            swap(first,second);
+//            swap(first,second);
+                m_data.move(first,second-1);
             endMoveRows();
             first = (j)+(i+1)*m_gridSize;
             second = j+(i*m_gridSize);
             beginMoveRows(QModelIndex(),first,first,QModelIndex(),second);
+                m_data.move(first,second);
             endMoveRows();
             return;
         }
@@ -150,5 +154,9 @@ void MyModel::mix(){
         qDebug() << ("new model values");
     } while(!isSolvable());
     qDebug() << ("new combination successfully found");
+}
+
+int MyModel::getGridSize() const{
+    return m_gridSize;
 }
 
