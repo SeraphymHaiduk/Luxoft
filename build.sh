@@ -1,6 +1,6 @@
 #/bin/bash
 rootDir="$PWD"
-plugPath="plugins/ModelPlugin"
+plugPath="Plugins/ModelPlugin"
 cd $plugPath
 cmake -B build
 cd build

@@ -2,7 +2,6 @@
 #define PLUGIN_H
 #include <QQmlExtensionPlugin>
 #include <QQmlEngine>
-#include "logic.h"
 class Plugin: public QQmlExtensionPlugin
 {
     Q_OBJECT
